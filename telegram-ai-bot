@@ -1,0 +1,23 @@
+import telebot
+import google.generativeai as genai
+
+BOT_TOKEN = "8819470480:AAED_JrJi86D7uY6PI8RE04P0bQylO8n4DA"
+GEMINI_API_KEY = "AIzaSyAQ8p-gjIihSpUvmO3c3gdOftIo6PabfR4"
+
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
+bot = telebot.TeleBot(BOT_TOKEN)
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, "Salom! Men AI botman. Savolingizni yozing 😊")
+
+@bot.message_handler(func=lambda m: True)
+def handle(message):
+    try:
+        response = model.generate_content(message.text)
+        bot.reply_to(message, response.text)
+    except Exception as e:
+        bot.reply_to(message, "Xatolik yuz berdi, qayta urinib ko'ring.")
+
+bot.polling()
